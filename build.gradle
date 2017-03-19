@@ -1,0 +1,45 @@
+group 'com.tabcorp.betting'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.7
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'com.google.guava', name: 'guava', version: '11.0.2'
+    compile group: 'com.google.inject', name: 'guice', version: '3.0'
+    compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.5'
+
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    testCompile group: 'org.mockito', name: 'mockito-core', version: '1.10.17'
+    testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
+}
+
+apply plugin: 'application'
+mainClassName = "com.tabcorp.betting.BettingHost"
+
+run {
+    if(System.getProperty("exec.args") != null) {
+        args System.getProperty("exec.args").split()
+    }
+}
+
+jar {
+
+    doFirst {
+        from(configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }) {
+            exclude "META-INF/*.SF"
+            exclude "META-INF/*.DSA"
+            exclude "META-INF/*.RSA"
+        }
+    }
+
+    manifest {
+        attributes 'Main-Class': "com.tabcorp.betting.BettingHost"
+        attributes 'Implementation-Title': 'Tabcorp coding challenge', 'Implementation-Version': version
+    }
+}
